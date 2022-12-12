@@ -11,10 +11,11 @@ public class DatabaseConnection {
 	public Connection getConnection () {
 		String dbName = "bd_libros";
 		String userName = "root";
-		String password = "admin";
+		String password = "300403";
 		
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
+			
 			
 			connection = DriverManager.getConnection(
 					"jdbc:mysql://localhost/" + dbName,

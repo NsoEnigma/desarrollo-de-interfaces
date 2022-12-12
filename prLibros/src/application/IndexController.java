@@ -109,7 +109,7 @@ public class IndexController {
 				listaLibrosBD.add(libro);
 			}
 			
-			//	Cerramos la conexión
+			//Cerramos la conexión
 			connection.close();
 			
 		} catch (SQLException e1) {
@@ -136,19 +136,40 @@ public class IndexController {
 			
 		} else {
 			if (esNumero(txtPaginas.getText())) {
-				Libro l = new Libro(
+				Libro libro = new Libro(
 						txtTitulo.getText(),
 						cbEditorial.getValue().toString(),
 						txtAutor.getText(),
 						Integer.parseInt(txtPaginas.getText())
 				);
 					
-				listaLibros.add(l);
+				listaLibros.add(libro);
 				
 				txtTitulo.clear();
 				cbEditorial.getSelectionModel().clearSelection();
 				txtAutor.clear();
 				txtPaginas.clear();
+				
+				DatabaseConnection dbConnection = new DatabaseConnection();
+				Connection connection = dbConnection.getConnection();
+				
+				try {
+					String query = "insert into libros (titulo, editorial, autor, paginas) VALUES (?, ?, ?, ?)";
+					PreparedStatement ps = connection.prepareStatement(query);
+					ps.setString(1, libro.getTitulo());
+					ps.setString(2, libro.getEditorial());
+					ps.setString(3, libro.getAutor());
+					ps.setInt(4, libro.getPaginas());
+					ps.executeUpdate();
+					
+					connection.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				ObservableList listaLibrosBD = getLibrosBD();
+				tableLibros.setItems(listaLibrosBD);
 				
 			} else {
 				
