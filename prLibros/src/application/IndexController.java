@@ -101,6 +101,7 @@ public class IndexController {
 			
 			while(rs.next()) {
 				Libro libro = new Libro(
+						rs.getInt("id"),
 						rs.getString("titulo"),
 						rs.getString("editorial"),
 						rs.getString("autor"),
@@ -201,8 +202,28 @@ public class IndexController {
 			alerta.setContentText("Por favor, selecciona un libro para borrarlo");
 			alerta.showAndWait();
 		} else {
-			tableLibros.getItems().remove(indiceSeleccionado);
-			tableLibros.getSelectionModel().clearSelection();  
+			//tableLibros.getItems().remove(indiceSeleccionado);
+			//tableLibros.getSelectionModel().clearSelection();
+			DatabaseConnection dbConnection = new DatabaseConnection();
+			Connection connection = dbConnection.getConnection();
+			
+			try {
+				String query = "delete from libros where id = ?";
+				PreparedStatement ps = connection.prepareStatement(query);
+				Libro libro = tableLibros.getSelectionModel().getSelectedItem();
+				ps.setInt(1, libro.getId());
+				ps.executeUpdate();
+				
+				tableLibros.getSelectionModel().clearSelection();
+				
+				ObservableList listaLibrosBD = getLibrosBD();
+				tableLibros.setItems(listaLibrosBD);
+				
+				connection.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
